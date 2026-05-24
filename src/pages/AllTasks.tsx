@@ -22,7 +22,7 @@ interface AllTasksProps {
   currentUserId: string
 }
 
-type SortKey = 'title' | 'status' | 'priority' | 'due_date' | 'created_at'
+type SortKey = 'title' | 'status' | 'priority' | 'epic' | 'due_date' | 'created_at'
 type SortDir = 'asc' | 'desc'
 
 const PRIORITY_ORDER = { critical: 0, high: 1, medium: 2, low: 3 }
@@ -44,6 +44,7 @@ export function AllTasks({ currentUserId }: AllTasksProps) {
       let cmp = 0
       if (sortKey === 'status') cmp = STATUS_ORDER[a.status] - STATUS_ORDER[b.status]
       else if (sortKey === 'priority') cmp = PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]
+      else if (sortKey === 'epic') cmp = (a.epic?.title ?? '').localeCompare(b.epic?.title ?? '')
       else if (sortKey === 'due_date') cmp = (a.due_date ?? '9999').localeCompare(b.due_date ?? '9999')
       else if (sortKey === 'title') cmp = a.title.localeCompare(b.title)
       else cmp = a.created_at.localeCompare(b.created_at)
@@ -87,10 +88,11 @@ export function AllTasks({ currentUserId }: AllTasksProps) {
         <FilterBar filters={filters} onChange={setFilters} />
       </div>
 
-      <div className="flex-shrink-0 grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-2 px-6 py-2 border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+      <div className="flex-shrink-0 grid grid-cols-[2fr_1fr_1fr_1.5fr_1fr_1fr_auto] gap-2 px-6 py-2 border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
         <button onClick={() => toggleSort('title')} className="flex items-center gap-1 hover:text-gray-700 text-left">Title <SortIcon col="title" /></button>
         <button onClick={() => toggleSort('status')} className="flex items-center gap-1 hover:text-gray-700">Status <SortIcon col="status" /></button>
         <button onClick={() => toggleSort('priority')} className="flex items-center gap-1 hover:text-gray-700">Priority <SortIcon col="priority" /></button>
+        <button onClick={() => toggleSort('epic')} className="flex items-center gap-1 hover:text-gray-700 text-left">Epic <SortIcon col="epic" /></button>
         <span>Assignee</span>
         <button onClick={() => toggleSort('due_date')} className="flex items-center gap-1 hover:text-gray-700">Due <SortIcon col="due_date" /></button>
         <span>Comments</span>
@@ -116,7 +118,7 @@ export function AllTasks({ currentUserId }: AllTasksProps) {
                 <div
                   key={task.id}
                   style={{ position: 'absolute', top: virtualRow.start, left: 0, right: 0, height: ROW_HEIGHT }}
-                  className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-2 items-center px-6 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="grid grid-cols-[2fr_1fr_1fr_1.5fr_1fr_1fr_auto] gap-2 items-center px-6 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors"
                   onClick={() => setSelectedTaskId(task.id)}
                 >
                   <div className="flex items-center gap-2 min-w-0">
@@ -130,6 +132,18 @@ export function AllTasks({ currentUserId }: AllTasksProps) {
                   </div>
                   <div><StatusBadge status={task.status} /></div>
                   <div><PriorityBadge priority={task.priority} /></div>
+                  <div>
+                    {task.epic ? (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setFilters((f) => ({ ...f, epic_id: f.epic_id === task.epic!.id ? '' : task.epic!.id })) }}
+                        className="flex items-center gap-1.5 max-w-full group"
+                        title={`Filter by: ${task.epic.title}`}
+                      >
+                        <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: task.epic.color }} />
+                        <span className="text-xs text-gray-600 truncate group-hover:text-gray-900 group-hover:underline">{task.epic.title}</span>
+                      </button>
+                    ) : <span className="text-xs text-gray-300">—</span>}
+                  </div>
                   <div className="flex items-center gap-1.5">
                     {task.assignee ? (
                       <>

@@ -12,7 +12,7 @@ import { TaskForm } from '@/components/tasks/TaskForm'
 import { TaskModal } from '@/components/tasks/TaskModal'
 import { Spinner } from '@/components/ui/Spinner'
 import { useTasks, useCreateTask } from '@/hooks/useTasks'
-import { formatDate } from '@/utils/format'
+import { formatDate, formatRelativeTime } from '@/utils/format'
 import type { Task, TaskFilters } from '@/types'
 
 const EMPTY_FILTERS: TaskFilters = { search: '', status: '', priority: '', epic_id: '', assignee_id: '', sprint_id: '', label: '' }
@@ -22,7 +22,7 @@ interface AllTasksProps {
   currentUserId: string
 }
 
-type SortKey = 'title' | 'status' | 'priority' | 'epic' | 'due_date' | 'created_at'
+type SortKey = 'title' | 'status' | 'priority' | 'epic' | 'due_date' | 'created_at' | 'creator'
 type SortDir = 'asc' | 'desc'
 
 const PRIORITY_ORDER = { critical: 0, high: 1, medium: 2, low: 3 }
@@ -45,6 +45,7 @@ export function AllTasks({ currentUserId }: AllTasksProps) {
       if (sortKey === 'status') cmp = STATUS_ORDER[a.status] - STATUS_ORDER[b.status]
       else if (sortKey === 'priority') cmp = PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]
       else if (sortKey === 'epic') cmp = (a.epic?.title ?? '').localeCompare(b.epic?.title ?? '')
+      else if (sortKey === 'creator') cmp = (a.creator?.display_name ?? a.creator?.email ?? '').localeCompare(b.creator?.display_name ?? b.creator?.email ?? '')
       else if (sortKey === 'due_date') cmp = (a.due_date ?? '9999').localeCompare(b.due_date ?? '9999')
       else if (sortKey === 'title') cmp = a.title.localeCompare(b.title)
       else cmp = a.created_at.localeCompare(b.created_at)
@@ -88,13 +89,15 @@ export function AllTasks({ currentUserId }: AllTasksProps) {
         <FilterBar filters={filters} onChange={setFilters} />
       </div>
 
-      <div className="flex-shrink-0 grid grid-cols-[2fr_1fr_1fr_1.5fr_1fr_1fr_auto] gap-2 px-6 py-2 border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+      <div className="flex-shrink-0 grid grid-cols-[2fr_1fr_1fr_1.25fr_1fr_0.75fr_0.9fr_1fr_auto] gap-2 px-6 py-2 border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
         <button onClick={() => toggleSort('title')} className="flex items-center gap-1 hover:text-gray-700 text-left">Title <SortIcon col="title" /></button>
         <button onClick={() => toggleSort('status')} className="flex items-center gap-1 hover:text-gray-700">Status <SortIcon col="status" /></button>
         <button onClick={() => toggleSort('priority')} className="flex items-center gap-1 hover:text-gray-700">Priority <SortIcon col="priority" /></button>
         <button onClick={() => toggleSort('epic')} className="flex items-center gap-1 hover:text-gray-700 text-left">Epic <SortIcon col="epic" /></button>
         <span>Assignee</span>
         <button onClick={() => toggleSort('due_date')} className="flex items-center gap-1 hover:text-gray-700">Due <SortIcon col="due_date" /></button>
+        <button onClick={() => toggleSort('created_at')} className="flex items-center gap-1 hover:text-gray-700">Created <SortIcon col="created_at" /></button>
+        <button onClick={() => toggleSort('creator')} className="flex items-center gap-1 hover:text-gray-700">By <SortIcon col="creator" /></button>
         <span>Comments</span>
       </div>
 
@@ -118,7 +121,7 @@ export function AllTasks({ currentUserId }: AllTasksProps) {
                 <div
                   key={task.id}
                   style={{ position: 'absolute', top: virtualRow.start, left: 0, right: 0, height: ROW_HEIGHT }}
-                  className="grid grid-cols-[2fr_1fr_1fr_1.5fr_1fr_1fr_auto] gap-2 items-center px-6 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="grid grid-cols-[2fr_1fr_1fr_1.25fr_1fr_0.75fr_0.9fr_1fr_auto] gap-2 items-center px-6 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors"
                   onClick={() => setSelectedTaskId(task.id)}
                 >
                   <div className="flex items-center gap-2 min-w-0">
@@ -153,6 +156,15 @@ export function AllTasks({ currentUserId }: AllTasksProps) {
                     ) : <span className="text-xs text-gray-300">—</span>}
                   </div>
                   <span className="text-xs text-gray-500">{formatDate(task.due_date)}</span>
+                  <span className="text-xs text-gray-500" title={new Date(task.created_at).toLocaleString()}>{formatRelativeTime(task.created_at)}</span>
+                  <div className="flex items-center gap-1.5">
+                    {task.creator ? (
+                      <>
+                        <Avatar profile={task.creator} size="xs" />
+                        <span className="text-xs text-gray-600 truncate">{task.creator.display_name ?? task.creator.email}</span>
+                      </>
+                    ) : <span className="text-xs text-gray-300">—</span>}
+                  </div>
                   <span className="flex items-center gap-1 text-xs text-gray-400">
                     {(task.comment_count ?? 0) > 0 && <><MessageSquare className="h-3.5 w-3.5" />{task.comment_count}</>}
                   </span>

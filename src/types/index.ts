@@ -44,6 +44,7 @@ export interface Task {
   epic?: Epic
   sprint?: Sprint
   assignee?: Profile
+  creator?: Profile
   comment_count?: number
 }
 

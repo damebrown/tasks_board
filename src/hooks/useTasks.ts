@@ -7,6 +7,7 @@ const TASK_SELECT = `
   epic:epics(*),
   sprint:sprints(id, name, is_active),
   assignee:profiles!tasks_assignee_id_fkey(id, email, display_name, avatar_url),
+  creator:profiles!tasks_created_by_fkey(id, email, display_name, avatar_url),
   comment_count:comments(count)
 `
 

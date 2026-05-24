@@ -37,7 +37,7 @@ export function SprintBoard({ currentUserId, onOpenSprints }: SprintBoardProps) 
     return BOARD_COLUMN_ORDER.reduce<Record<TaskStatus, Task[]>>((acc, status) => {
       acc[status] = displayTasks.filter((t) => t.status === status)
       return acc
-    }, { not_started: [], in_progress: [], blocked: [], done: [] })
+    }, { tbd: [], not_started: [], in_progress: [], in_review: [], blocked: [], done: [] })
   }, [displayTasks])
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))

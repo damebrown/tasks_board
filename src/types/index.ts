@@ -1,4 +1,4 @@
-export type TaskStatus = 'not_started' | 'in_progress' | 'blocked' | 'done'
+export type TaskStatus = 'tbd' | 'not_started' | 'in_progress' | 'in_review' | 'blocked' | 'done'
 export type TaskPriority = 'low' | 'medium' | 'high' | 'critical'
 
 export interface Profile {

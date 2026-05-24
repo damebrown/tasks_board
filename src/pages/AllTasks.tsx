@@ -26,7 +26,7 @@ type SortKey = 'title' | 'status' | 'priority' | 'epic' | 'due_date' | 'created_
 type SortDir = 'asc' | 'desc'
 
 const PRIORITY_ORDER = { critical: 0, high: 1, medium: 2, low: 3 }
-const STATUS_ORDER = { not_started: 0, in_progress: 1, blocked: 2, done: 3 }
+const STATUS_ORDER = { tbd: 0, not_started: 1, in_progress: 2, in_review: 3, blocked: 4, done: 5 }
 
 export function AllTasks({ currentUserId }: AllTasksProps) {
   const [filters, setFilters] = useState<TaskFilters>(EMPTY_FILTERS)

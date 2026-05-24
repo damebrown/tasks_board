@@ -68,7 +68,7 @@ async function main() {
   let ticket
   try { ticket = JSON.parse(raw) } catch { console.error('Invalid JSON:', raw); process.exit(1) }
 
-  const { title, description, priority = 'medium', epic: epicName, status = 'not_started', labels = [] } = ticket
+  const { title, description, priority = 'medium', epic: epicName, status = 'tbd', labels = [] } = ticket
 
   if (!title) { console.error('title is required'); process.exit(1) }
   if (!epicName) { console.error('epic is required'); process.exit(1) }

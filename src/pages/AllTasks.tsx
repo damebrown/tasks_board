@@ -179,7 +179,7 @@ export function AllTasks({ currentUserId }: AllTasksProps) {
         <TaskForm onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} submitLabel={creating ? 'Creating…' : 'Create task'} />
       </Modal>
 
-      <TaskModal taskId={selectedTaskId} currentUserId={currentUserId} onClose={() => setSelectedTaskId(null)} />
+      <TaskModal taskId={selectedTaskId} currentUserId={currentUserId} onClose={() => setSelectedTaskId(null)} onNavigate={setSelectedTaskId} />
     </div>
   )
 }

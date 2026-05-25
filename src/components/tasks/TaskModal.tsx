@@ -7,6 +7,7 @@ import { StatusBadge } from './StatusBadge'
 import { PriorityBadge } from './PriorityBadge'
 import { TaskForm } from './TaskForm'
 import { CommentList } from '@/components/comments/CommentList'
+import { BlockersList } from './BlockersList'
 import { useTask, useUpdateTask, useDeleteTask } from '@/hooks/useTasks'
 import { useEpics } from '@/hooks/useEpics'
 import { useSprints } from '@/hooks/useSprints'
@@ -21,12 +22,13 @@ interface TaskModalProps {
   taskId: string | null
   currentUserId: string
   onClose: () => void
+  onNavigate?: (taskId: string) => void
 }
 
 const FIELD_CLASS = 'cursor-pointer rounded px-1 -mx-1 hover:bg-gray-50 transition-colors'
 const INLINE_SELECT_CLASS = 'rounded-md border border-gray-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white'
 
-export function TaskModal({ taskId, currentUserId, onClose }: TaskModalProps) {
+export function TaskModal({ taskId, currentUserId, onClose, onNavigate }: TaskModalProps) {
   const [editMode, setEditMode] = useState(false)
   const [editingField, setEditingField] = useState<EditableField | null>(null)
   const [titleDraft, setTitleDraft] = useState('')
@@ -345,6 +347,12 @@ export function TaskModal({ taskId, currentUserId, onClose }: TaskModalProps) {
               </button>
             )}
           </div>
+
+          {task.status === 'blocked' && (
+            <div className="border-t border-red-100 pt-4">
+              <BlockersList taskId={task.id} onNavigate={onNavigate} />
+            </div>
+          )}
 
           <div className="border-t border-gray-100 pt-4">
             <CommentList taskId={task.id} currentUserId={currentUserId} />

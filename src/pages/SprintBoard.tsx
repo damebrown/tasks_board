@@ -136,7 +136,7 @@ export function SprintBoard({ currentUserId, onOpenSprints }: SprintBoardProps) 
         />
       </Modal>
 
-      <TaskModal taskId={selectedTaskId} currentUserId={currentUserId} onClose={() => setSelectedTaskId(null)} />
+      <TaskModal taskId={selectedTaskId} currentUserId={currentUserId} onClose={() => setSelectedTaskId(null)} onNavigate={setSelectedTaskId} />
     </div>
   )
 }

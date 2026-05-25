@@ -135,11 +135,11 @@ export function AllTasks({ currentUserId }: AllTasksProps) {
                   </div>
                   <div><StatusBadge status={task.status} /></div>
                   <div><PriorityBadge priority={task.priority} /></div>
-                  <div>
+                  <div className="min-w-0">
                     {task.epic ? (
                       <button
                         onClick={(e) => { e.stopPropagation(); setFilters((f) => ({ ...f, epic_id: f.epic_id === task.epic!.id ? '' : task.epic!.id })) }}
-                        className="flex items-center gap-1.5 max-w-full group"
+                        className="flex items-center gap-1.5 min-w-0 w-full group"
                         title={`Filter by: ${task.epic.title}`}
                       >
                         <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: task.epic.color }} />
@@ -147,7 +147,7 @@ export function AllTasks({ currentUserId }: AllTasksProps) {
                       </button>
                     ) : <span className="text-xs text-gray-300">—</span>}
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 min-w-0">
                     {task.assignee ? (
                       <>
                         <Avatar profile={task.assignee} size="xs" />
@@ -157,7 +157,7 @@ export function AllTasks({ currentUserId }: AllTasksProps) {
                   </div>
                   <span className="text-xs text-gray-500">{formatDate(task.due_date)}</span>
                   <span className="text-xs text-gray-500" title={new Date(task.created_at).toLocaleString()}>{formatRelativeTime(task.created_at)}</span>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 min-w-0">
                     {task.creator ? (
                       <>
                         <Avatar profile={task.creator} size="xs" />
